@@ -1,5 +1,6 @@
 from decouple import config as decouple_config
 from selenium.webdriver import ChromeOptions
+from selenium.webdriver.chrome.service import Service
 
 # HTML Elements
 COOKIES_BUTTON_XPATH = decouple_config('COOKIES_BUTTON_XPATH', '', cast=str)
@@ -28,3 +29,7 @@ def get_chrome_options() -> ChromeOptions:
     chrome_options.add_argument("--no-sandbox")
     chrome_options.binary_location = GOOGLE_CHROME_BIN
     return chrome_options
+
+
+def get_chrome_service():
+    return Service(executable_path=CHROMEDRIVER_PATH)

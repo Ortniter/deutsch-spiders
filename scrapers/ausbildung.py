@@ -1,10 +1,8 @@
 import logging
 from time import sleep
 
-from selenium import webdriver
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.webdriver import WebDriver
 from requests_html import HTML, HTMLSession
 from bs4 import BeautifulSoup, Tag
 
@@ -15,10 +13,7 @@ logger = logging.getLogger(__name__)
 
 class SearchPage:
     def __init__(self, search_page: str = None):
-        self.driver: WebDriver = webdriver.Chrome(
-            service=config.get_chrome_service(),
-            options=config.get_chrome_options()
-        )
+        self.driver = config.get_webdriver()
         self.search_page = search_page or config.SEARCH_PAGE
         self.session: HTMLSession = HTMLSession()
 
@@ -43,7 +38,7 @@ class SearchPage:
 
             found_links_count = len(self.found_links)
 
-            print(f'Found links: {found_links_count}')
+            logger.info(f'Found links: {found_links_count}')
 
     def accept_cookies(self):
         element = self.driver.find_element(By.XPATH, config.COOKIES_BUTTON_XPATH)
@@ -121,9 +116,10 @@ def run():
     for link in links:
         detail_page = DetailPage(link)
         detail_page.render()
-        print(f'{detail_page.name} - {detail_page.position} - {detail_page.email} - {detail_page.phone}')
-        print(f'{detail_page.url}')
-        print('---')
+
+        logger.info(f'{detail_page.name} - {detail_page.position} - {detail_page.email} - {detail_page.phone}')
+        logger.info(f'{detail_page.url}')
+        logger.info('---')
 
 
 if __name__ == '__main__':

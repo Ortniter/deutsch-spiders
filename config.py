@@ -1,6 +1,8 @@
 from decouple import config as decouple_config
 from selenium.webdriver import ChromeOptions
 from selenium.webdriver.chrome.service import Service
+from selenium import webdriver
+from selenium.webdriver.firefox.webdriver import WebDriver
 
 # HTML Elements
 COOKIES_BUTTON_XPATH = decouple_config('COOKIES_BUTTON_XPATH', '', cast=str)
@@ -22,6 +24,9 @@ CHROMEDRIVER_PATH = decouple_config('CHROMEDRIVER_PATH', '', cast=str)
 SCROLL_BOTTOM_SCRIPT = decouple_config('SCROLL_BOTTOM_SCRIPT', '', cast=str)
 
 WAIT_TIME = decouple_config('WAIT_TIME', 10, cast=int)
+HEROKU_ENV = decouple_config('HEROKU_ENV', False, cast=bool)
+COMMAND_EXECUTOR = decouple_config('COMMAND_EXECUTOR', 'http://localhost:4444', cast=str)
+DATABASE_URL = decouple_config('DATABASE_URL', 'sqlite:///./sql_app.db', cast=str)
 
 
 def get_chrome_options() -> ChromeOptions:
@@ -35,3 +40,17 @@ def get_chrome_options() -> ChromeOptions:
 
 def get_chrome_service():
     return Service(executable_path=CHROMEDRIVER_PATH)
+
+
+def get_webdriver() -> WebDriver:
+    if HEROKU_ENV:
+        driver = webdriver.Chrome(
+            service=get_chrome_service(),
+            options=get_chrome_options()
+        )
+    else:
+        driver: WebDriver = webdriver.Remote(
+            command_executor=COMMAND_EXECUTOR,
+            options=webdriver.FirefoxOptions()
+        )
+    return driver

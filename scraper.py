@@ -24,9 +24,9 @@ class SearchPage:
 
     def render(self):
         self.driver.get(self.search_page)
-        sleep(3)
+        sleep(config.WAIT_TIME)
         self.accept_cookies()
-        sleep(1)
+        sleep(config.WAIT_TIME)
 
         found_links_count = 0
 

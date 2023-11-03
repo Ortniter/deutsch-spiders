@@ -21,6 +21,8 @@ GOOGLE_CHROME_BIN = decouple_config('GOOGLE_CHROME_BIN', '', cast=str)
 CHROMEDRIVER_PATH = decouple_config('CHROMEDRIVER_PATH', '', cast=str)
 SCROLL_BOTTOM_SCRIPT = decouple_config('SCROLL_BOTTOM_SCRIPT', '', cast=str)
 
+WAIT_TIME = decouple_config('WAIT_TIME', 10, cast=int)
+
 
 def get_chrome_options() -> ChromeOptions:
     chrome_options = ChromeOptions()

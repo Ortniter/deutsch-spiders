@@ -33,7 +33,7 @@ class SearchPage:
         while True:
             self.scroll_bottom()
 
-            sleep(1)
+            sleep(config.WAIT_TIME)
 
             if found_links_count == len(self.found_links):
                 try:

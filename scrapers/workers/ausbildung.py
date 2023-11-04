@@ -75,9 +75,6 @@ class DetailPage:
         self._contact_div: Tag = Tag(name='div')
         self.has_contact_info = False
 
-    def __del__(self):
-        self.session.close()
-
     async def render(self):
         response = await self.session.get(self.url)
         await response.html.render(sleep=1, keep_page=True, scrolldown=1)
@@ -88,6 +85,8 @@ class DetailPage:
         if contact_div:
             self._contact_div = contact_div
             self.has_contact_info = True
+
+        await self.session.close()
 
     @property
     def name(self):

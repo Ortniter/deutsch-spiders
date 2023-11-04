@@ -3,7 +3,7 @@ from time import sleep
 
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
-from requests_html import HTML, HTMLSession
+from requests_html import HTML, HTMLSession, AsyncHTMLSession
 from bs4 import BeautifulSoup, Tag
 
 import config
@@ -71,15 +71,15 @@ class DetailPage:
 
     def __init__(self, url: str):
         self.url: str = url
-        self.session: HTMLSession = HTMLSession()
+        self.session: AsyncHTMLSession = AsyncHTMLSession()
         self._contact_div: Tag = Tag(name='div')
         self.has_contact_info = False
 
     def __del__(self):
         self.session.close()
 
-    def render(self):
-        response = self.session.get(self.url)
+    async def render(self):
+        response = await self.session.get(self.url)
         response.html.render(sleep=1, keep_page=True, scrolldown=1)
 
         soup = BeautifulSoup(response.html.html, 'html.parser')
@@ -110,7 +110,7 @@ class DetailPage:
         return getattr(phone_div, 'text', '').strip()
 
 
-def run(scraping_session: ScrapingSession):
+async def run(scraping_session: ScrapingSession):
     search_page = SearchPage(scraping_session.url)
     search_page.render()
 
@@ -121,7 +121,7 @@ def run(scraping_session: ScrapingSession):
 
         for link in links:
             detail_page = DetailPage(link)
-            detail_page.render()
+            await detail_page.render()
 
             if detail_page.email:
                 record = Record(

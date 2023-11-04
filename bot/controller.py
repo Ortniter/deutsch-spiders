@@ -22,6 +22,5 @@ def start():
 
 
 def send_message(chat_id: int, text: str):
-    # loop = asyncio.get_event_loop()
-    # loop.run_until_complete(APP.bot.send_message(chat_id=chat_id, text=text))
-    APP.bot.send_message(chat_id=chat_id, text=text)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(APP.bot.send_message(chat_id=chat_id, text=text))

@@ -7,6 +7,9 @@ from requests_html import HTML, HTMLSession
 from bs4 import BeautifulSoup, Tag
 
 import config
+from users.models import User
+from scrapers.models import ScrapingSession, Record
+from db import SessionLocal
 
 logger = logging.getLogger(__name__)
 
@@ -107,20 +110,32 @@ class DetailPage:
         return getattr(phone_div, 'text', '').strip()
 
 
-def run():
-    search_page = SearchPage()
+def run(scraping_session: ScrapingSession):
+    search_page = SearchPage(scraping_session.url)
     search_page.render()
 
     links = list(search_page.found_links)
 
-    for link in links:
-        detail_page = DetailPage(link)
-        detail_page.render()
+    with SessionLocal() as db:
+        records_to_create = []
 
-        logger.info(f'{detail_page.name} - {detail_page.position} - {detail_page.email} - {detail_page.phone}')
-        logger.info(f'{detail_page.url}')
-        logger.info('---')
+        for link in links:
+            detail_page = DetailPage(link)
+            detail_page.render()
 
+            if detail_page.email:
+                record = Record(
+                    url=link,
+                    name=detail_page.name,
+                    position=detail_page.position,
+                    email=detail_page.email,
+                    phone=detail_page.phone,
+                    session_id=scraping_session.id
+                )
+                records_to_create.append(record)
 
-if __name__ == '__main__':
-    run()
+            logger.info(f'{detail_page.name} - {detail_page.position} - {detail_page.email} - {detail_page.phone}')
+            logger.info(f'{detail_page.url}')
+            logger.info('---')
+
+        db.bulk_save_objects(records_to_create)

@@ -61,7 +61,7 @@ async def ausbildung(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     logger.info(f'Starting scraping session: {scraping_session}')
 
-    scraper_utils.scrape(scraping_session)
+    await scraper_utils.scrape(scraping_session)
 
 
 class Button:

@@ -12,11 +12,11 @@ def get_worker(scraper):
     return MAPPER.get(scraper)
 
 
-def run_worker(scraping_session):
+async def run_worker(scraping_session):
     db = SessionLocal()
     try:
         worker = get_worker(scraping_session.scraper.value)
-        worker.run(scraping_session)
+        await worker.run(scraping_session)
     except Exception as e:
         scraping_session.status = scraper_constants.Statuses.failed
         db.add(scraping_session)

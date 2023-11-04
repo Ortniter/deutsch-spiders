@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Table
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import Session, relationship
 
 from db import Base
 
@@ -19,3 +19,24 @@ class User(Base):
 
     def __str__(self):
         return self.username
+
+    @classmethod
+    def create_or_update(cls, db: Session, **kwargs):
+        user = db.query(cls).filter(cls.telegram_id == kwargs['telegram_id']).first()
+
+        if not user:
+            user = User(**kwargs)
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+        else:
+            user.username = kwargs['username']
+            user.first_name = kwargs['first_name']
+            user.last_name = kwargs['last_name']
+            db.commit()
+
+        return user
+
+    @classmethod
+    def get_by_telegram_id(cls, db: Session, telegram_id: int):
+        return db.query(cls).filter(cls.telegram_id == telegram_id).first()

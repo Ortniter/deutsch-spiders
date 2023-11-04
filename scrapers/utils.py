@@ -34,6 +34,6 @@ def is_valid_url(url):
         return False
 
 
-async def scrape(scraping_session):
-    await scraper_controller.run_worker(scraping_session)
+def scrape(scraping_session):
+    scraper_controller.run_worker(scraping_session)
     # multiprocessing.Process(target=scraper_controller.run_worker, args=(scraping_session,)).start()

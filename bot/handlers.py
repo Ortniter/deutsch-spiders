@@ -8,6 +8,7 @@ from bot import utils
 from users.models import User
 from scrapers.models import ScrapingSession, Record
 from scrapers import utils as scraper_utils
+from scrapers import tasks as scraper_tasks
 from scrapers import constants as scraper_constants
 
 logging.basicConfig(level=logging.INFO)
@@ -61,7 +62,8 @@ async def ausbildung(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     logger.info(f'Starting scraping session: {scraping_session}')
 
-    await scraper_utils.scrape(scraping_session)
+    scraper_tasks.scrape.delay(scraping_session.id)
+    # scraper_utils.scrape(scraping_session)
 
 
 class Button:

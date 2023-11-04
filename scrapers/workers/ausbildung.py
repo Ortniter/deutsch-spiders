@@ -3,7 +3,7 @@ from time import sleep
 
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
-from requests_html import HTML, HTMLSession, AsyncHTMLSession
+from requests_html import HTML, HTMLSession
 from bs4 import BeautifulSoup, Tag
 
 import config
@@ -71,13 +71,16 @@ class DetailPage:
 
     def __init__(self, url: str):
         self.url: str = url
-        self.session: AsyncHTMLSession = AsyncHTMLSession()
+        self.session: HTMLSession = HTMLSession()
         self._contact_div: Tag = Tag(name='div')
         self.has_contact_info = False
 
-    async def render(self):
-        response = await self.session.get(self.url)
-        await response.html.render(sleep=1, keep_page=True, scrolldown=1)
+    def __del__(self):
+        self.session.close()
+
+    def render(self):
+        response = self.session.get(self.url)
+        response.html.render(sleep=1, keep_page=True, scrolldown=1)
 
         soup = BeautifulSoup(response.html.html, 'html.parser')
         contact_div = soup.find("div", class_=config.CONTACT_DIV_CLASS)
@@ -85,8 +88,6 @@ class DetailPage:
         if contact_div:
             self._contact_div = contact_div
             self.has_contact_info = True
-
-        await self.session.close()
 
     @property
     def name(self):
@@ -109,7 +110,7 @@ class DetailPage:
         return getattr(phone_div, 'text', '').strip()
 
 
-async def run(scraping_session: ScrapingSession):
+def run(scraping_session: ScrapingSession):
     search_page = SearchPage(scraping_session.url)
     search_page.render()
 
@@ -120,7 +121,7 @@ async def run(scraping_session: ScrapingSession):
 
         for link in links:
             detail_page = DetailPage(link)
-            await detail_page.render()
+            detail_page.render()
 
             if detail_page.email:
                 record = Record(

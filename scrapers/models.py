@@ -12,9 +12,12 @@ class ScrapingSession(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    status = Column(EnumColumn(scraper_constants.Statuses), index=True)
     scraper = Column(EnumColumn(scraper_constants.Scrapers), index=True)
     url = Column(String, index=True)
-    records = relationship('Record', back_populates='session')
+    records = relationship('Record')
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
+    user = relationship('User', back_populates='sessions')
 
     def __repr__(self) -> str:
         return f'<Session {self.scraper} - {self.created_at}>'
@@ -28,10 +31,10 @@ class Record(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     url = Column(String, index=True)
-    name = Column(String, index=True)
-    position = Column(String, index=True)
+    name = Column(String, index=True, nullable=True)
+    position = Column(String, index=True, nullable=True)
     email = Column(String, index=True, unique=True)
-    phone = Column(String, index=True)
+    phone = Column(String, index=True, nullable=True)
     session_id = Column(Integer, ForeignKey('sessions.id', ondelete='CASCADE'))
     session = relationship('ScrapingSession', back_populates='records')
 

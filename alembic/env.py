@@ -15,6 +15,7 @@ if alembic_config.config_file_name is not None:
     fileConfig(alembic_config.config_file_name)
 
 import db
+from users.models import User
 from scrapers.models import ScrapingSession, Record
 
 # add your model's MetaData object here

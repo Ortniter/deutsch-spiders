@@ -18,8 +18,7 @@ def get_worker(scraper):
     return MAPPER.get(scraper)
 
 
-def run_worker(scraping_session):
-    db = SessionLocal()
+def run_worker(db, scraping_session):
     try:
         worker = get_worker(scraping_session.scraper.value)
         worker.run(scraping_session)
@@ -42,19 +41,21 @@ def run_worker(scraping_session):
         )
 
 
-if __name__ == '__main__':
+def monitor_sessions():
     while True:
-        logger.info('Checking for pending sessions...')
+        with SessionLocal() as db:
+            logger.info('Checking for pending sessions...')
 
-        db = SessionLocal()
+            pending_sessions = db.query(ScrapingSession).filter(
+                ScrapingSession.status == scraper_constants.Statuses.pending
+            ).all()
 
-        pending_sessions = db.query(ScrapingSession).filter(
-            ScrapingSession.status == scraper_constants.Statuses.pending
-        ).all()
+            for session in pending_sessions:
+                logger.info(f'Running session {session.id}...')
+                run_worker(db, session)
 
-        for session in pending_sessions:
-            logger.info(f'Running session {session.id}...')
-            run_worker(session)
+            # sleep(60 * 5)
 
-        db.close()
-        # sleep(60 * 5)
+
+if __name__ == '__main__':
+    monitor_sessions()

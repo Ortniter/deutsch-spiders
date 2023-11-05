@@ -1,0 +1,36 @@
+version: '3.4'
+
+services:
+  selenium:
+    image: selenium/standalone-firefox
+    networks:
+      selenium:
+      app:
+    ports:
+      - 4444:4444
+      - 7900:7900
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    networks:
+      selenium:
+      app:
+    volumes:
+      - ./:/app
+      - ~/.bash_history:/root/.bash_history
+    command: |
+      /usr/bin/env sh -c "uvicorn main:app --host 0.0.0.0 --reload"
+    env_file:
+      - docker/app/.env
+    ports:
+      - 8000:8000
+    environment:
+      - IPYTHONDIR=/app/.ipython
+
+networks:
+  app:
+    driver: bridge
+  selenium:
+    driver: bridge

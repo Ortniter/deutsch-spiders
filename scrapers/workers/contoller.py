@@ -36,3 +36,11 @@ def run_worker(session_id):
             chat_id=scraping_session.user.telegram_id,
             text=f'Scraping {scraping_session.scraper.value} is done.'
         )
+
+
+if __name__ == '__main__':
+    from time import sleep
+
+    while True:
+        print('Checking for pending sessions...')
+        sleep(5)

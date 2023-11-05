@@ -26,7 +26,7 @@ SCROLL_BOTTOM_SCRIPT = decouple_config('SCROLL_BOTTOM_SCRIPT', '', cast=str)
 
 WAIT_TIME = decouple_config('WAIT_TIME', 10, cast=int)
 HEROKU_ENV = decouple_config('HEROKU_ENV', False, cast=bool)
-COMMAND_EXECUTOR = decouple_config('COMMAND_EXECUTOR', 'http://localhost:4444', cast=str)
+COMMAND_EXECUTOR = decouple_config('COMMAND_EXECUTOR', 'http://selenium:4444', cast=str)
 DATABASE_URL = decouple_config('DATABASE_URL', 'sqlite:///./sql_app.db', cast=str)
 TELEGRAM_BOT_TOKEN = decouple_config('TELEGRAM_BOT_TOKEN', '', cast=str)
 REDIS_URL = decouple_config('REDIS_URL', 'redis://redis:6379/0', cast=str)

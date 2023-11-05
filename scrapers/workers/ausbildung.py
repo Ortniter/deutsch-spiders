@@ -80,7 +80,6 @@ class DetailPage:
 
     def render(self):
         response = self.session.get(self.url)
-        response.html.render(sleep=1, keep_page=True, scrolldown=1)
 
         soup = BeautifulSoup(response.html.html, 'html.parser')
         contact_div = soup.find("div", class_=config.CONTACT_DIV_CLASS)

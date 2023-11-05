@@ -1,9 +1,6 @@
 import csv
-import multiprocessing
 from urllib.parse import urlparse
 from tempfile import NamedTemporaryFile
-
-from scrapers.workers import controller as scraper_controller
 
 
 def get_scraping_session_csv(scraping_session):
@@ -32,8 +29,3 @@ def is_valid_url(url):
         return all([result.scheme, result.netloc])
     except ValueError:
         return False
-
-
-def scrape(scraping_session):
-    scraper_controller.run_worker(scraping_session)
-    # multiprocessing.Process(target=scraper_controller.run_worker, args=(scraping_session,)).start()

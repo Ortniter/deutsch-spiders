@@ -6,6 +6,7 @@ from bot import controller as bot_controller
 from scrapers import constants as scraper_constants
 from scrapers.workers import ausbildung
 from scrapers.models import ScrapingSession
+from scrapers import utils as scraper_utils
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +36,10 @@ def run_worker(db, scraping_session):
         scraping_session.status = scraper_constants.Statuses.ready
         db.add(scraping_session)
         db.commit()
+        bot_controller.send_document(
+            chat_id=scraping_session.user.telegram_id,
+            document=scraper_utils.get_scraping_session_csv(scraping_session)
+        )
         bot_controller.send_message(
             chat_id=scraping_session.user.telegram_id,
             text=f'Scraping {scraping_session.scraper.value} is done.'
@@ -54,7 +59,7 @@ def monitor_sessions():
                 logger.info(f'Running session {session.id}...')
                 run_worker(db, session)
 
-            # sleep(60 * 5)
+            sleep(60)
 
 
 if __name__ == '__main__':

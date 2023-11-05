@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from io import TextIOWrapper
 
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler
 
@@ -24,6 +25,11 @@ def start():
 def send_message(chat_id: int, text: str):
     loop = asyncio.get_event_loop()
     loop.run_until_complete(APP.bot.send_message(chat_id=chat_id, text=text))
+
+
+def send_document(chat_id: int, document: TextIOWrapper):
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(APP.bot.send_document(chat_id=chat_id, document=document))
 
 
 if __name__ == '__main__':

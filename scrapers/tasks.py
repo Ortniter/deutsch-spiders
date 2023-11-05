@@ -1,6 +1,6 @@
 from tasks import app
 
-from scrapers.workers import contoller as worker_controller
+from scrapers.workers import controller as worker_controller
 
 
 @app.task

@@ -3,7 +3,7 @@ import multiprocessing
 from urllib.parse import urlparse
 from tempfile import NamedTemporaryFile
 
-from scrapers.workers import contoller as scraper_controller
+from scrapers.workers import controller as scraper_controller
 
 
 def get_scraping_session_csv(scraping_session):

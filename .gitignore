@@ -5,3 +5,4 @@ sql_app.db
 .idea/
 tmp
 tmp/
+.env

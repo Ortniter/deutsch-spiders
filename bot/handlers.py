@@ -8,7 +8,6 @@ from bot import utils
 from users.models import User
 from scrapers.models import ScrapingSession, Record
 from scrapers import utils as scraper_utils
-from scrapers import tasks as scraper_tasks
 from scrapers import constants as scraper_constants
 
 logging.basicConfig(level=logging.INFO)
@@ -60,9 +59,9 @@ async def ausbildung(update: Update, context: ContextTypes.DEFAULT_TYPE):
         db.commit()
         db.refresh(scraping_session)
 
-    logger.info(f'Starting scraping session: {scraping_session}')
+    # logger.info(f'Starting scraping session: {scraping_session}')
 
-    scraper_tasks.scrape.delay(scraping_session.id)
+    # scraper_tasks.scrape.delay(scraping_session.id)
     # scraper_utils.scrape(scraping_session)
 
 

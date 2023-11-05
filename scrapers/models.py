@@ -2,10 +2,8 @@ from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy import Enum as EnumColumn
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from fastapi_storages.integrations.sqlalchemy import FileType
 
 from db import Base
-from config import storage
 from scrapers import constants as scraper_constants
 
 
@@ -18,9 +16,8 @@ class ScrapingSession(Base):
     scraper = Column(EnumColumn(scraper_constants.Scrapers), index=True)
     url = Column(String, index=True)
     records = relationship('Record')
-    file = Column(FileType(storage=storage), nullable=True)
-    # user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
-    # user = relationship('User', back_populates='sessions')
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
+    user = relationship('User', back_populates='sessions')
 
     def __repr__(self) -> str:
         return f'<Session {self.scraper} - {self.created_at}>'

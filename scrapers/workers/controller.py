@@ -1,8 +1,13 @@
+import logging
+from time import sleep
+
 from db import SessionLocal
 from bot import controller as bot_controller
 from scrapers import constants as scraper_constants
 from scrapers.workers import ausbildung
 from scrapers.models import ScrapingSession
+
+logger = logging.getLogger(__name__)
 
 MAPPER = {
     scraper_constants.Scrapers.ausbildung.value: ausbildung,
@@ -13,10 +18,9 @@ def get_worker(scraper):
     return MAPPER.get(scraper)
 
 
-def run_worker(session_id):
+def run_worker(scraping_session):
     db = SessionLocal()
     try:
-        scraping_session = db.query(ScrapingSession).get(session_id)
         worker = get_worker(scraping_session.scraper.value)
         worker.run(scraping_session)
     except Exception as e:
@@ -39,8 +43,18 @@ def run_worker(session_id):
 
 
 if __name__ == '__main__':
-    from time import sleep
-
     while True:
-        print('Checking for pending sessions...')
-        sleep(5)
+        logger.info('Checking for pending sessions...')
+
+        db = SessionLocal()
+
+        pending_sessions = db.query(ScrapingSession).filter(
+            ScrapingSession.status == scraper_constants.Statuses.pending
+        ).all()
+
+        for session in pending_sessions:
+            logger.info(f'Running session {session.id}...')
+            run_worker(session)
+
+        db.close()
+        # sleep(60 * 5)

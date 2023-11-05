@@ -1,4 +1,5 @@
 import json
+import datetime
 from functools import cached_property
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
@@ -32,7 +33,12 @@ def get_scrapers_keyboard():
 def get_sessions_keyboard(user):
     keyboard: list[list[InlineKeyboardButton]] = []
 
-    for sessions in user.sessions.all():
+    sessions = user.sessions.filter(
+        ScrapingSession.scraper == user.selected_scraper,
+        ScrapingSession.created_at == datetime.date.today()
+    ).all()
+
+    for sessions in sessions:
         keyboard.append([
             InlineKeyboardButton(
                 text=f'{sessions.formatted_status} {sessions.formatted_created_at}',

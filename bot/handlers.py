@@ -59,11 +59,6 @@ async def ausbildung(update: Update, context: ContextTypes.DEFAULT_TYPE):
         db.commit()
         db.refresh(scraping_session)
 
-    # logger.info(f'Starting scraping session: {scraping_session}')
-
-    # scraper_tasks.scrape.delay(scraping_session.id)
-    # scraper_utils.scrape(scraping_session)
-
 
 class Button:
 

@@ -63,7 +63,7 @@ class Record(Base):
     url = Column(String, index=True)
     name = Column(String, index=True, nullable=True)
     position = Column(String, index=True, nullable=True)
-    email = Column(String, index=True, unique=True)
+    email = Column(String, index=True)
     phone = Column(String, index=True, nullable=True)
     session_id = Column(Integer, ForeignKey('sessions.id', ondelete='CASCADE'))
     session = relationship('ScrapingSession', back_populates='records')

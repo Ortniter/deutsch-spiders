@@ -138,3 +138,4 @@ def run(scraping_session: ScrapingSession):
             logger.info('---')
 
         db.bulk_save_objects(records_to_create)
+        db.commit()

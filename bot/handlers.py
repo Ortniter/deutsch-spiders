@@ -88,7 +88,10 @@ class Button:
         await self.bot.edit_message_reply_markup(
             chat_id=self.chat_id,
             message_id=self.previous_message_id,
-            reply_markup=utils.get_sessions_keyboard(user=self.data.current_user),
+            reply_markup=utils.get_sessions_keyboard(
+                user=self.data.current_user,
+                scraper=self.data.selected_scraper
+            ),
         )
 
     async def _load_records(self, **kwargs):

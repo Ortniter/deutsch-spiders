@@ -30,11 +30,11 @@ def get_scrapers_keyboard():
     return InlineKeyboardMarkup(keyboard)
 
 
-def get_sessions_keyboard(user):
+def get_sessions_keyboard(user, scraper):
     keyboard: list[list[InlineKeyboardButton]] = []
 
     sessions = user.sessions.filter(
-        ScrapingSession.scraper == user.selected_scraper,
+        ScrapingSession.scraper == scraper,
         ScrapingSession.created_at == datetime.date.today()
     ).all()
 

@@ -3,3 +3,5 @@ venv/
 sql_app.db
 .idea
 .idea/
+tmp
+tmp/

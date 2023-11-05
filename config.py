@@ -3,6 +3,7 @@ from selenium.webdriver import ChromeOptions
 from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
 from selenium.webdriver.firefox.webdriver import WebDriver
+from fastapi_storages import FileSystemStorage
 
 # HTML Elements
 COOKIES_BUTTON_XPATH = decouple_config('COOKIES_BUTTON_XPATH', '', cast=str)
@@ -29,6 +30,8 @@ COMMAND_EXECUTOR = decouple_config('COMMAND_EXECUTOR', 'http://localhost:4444', 
 DATABASE_URL = decouple_config('DATABASE_URL', 'sqlite:///./sql_app.db', cast=str)
 TELEGRAM_BOT_TOKEN = decouple_config('TELEGRAM_BOT_TOKEN', '', cast=str)
 REDIS_URL = decouple_config('REDIS_URL', 'redis://redis:6379/0', cast=str)
+
+storage = FileSystemStorage(path="/tmp")
 
 
 def get_chrome_options() -> ChromeOptions:

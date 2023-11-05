@@ -12,7 +12,7 @@ class User(Base):
     telegram_id = Column(Integer, index=True)
     first_name = Column(String(255), nullable=True)
     last_name = Column(String(255), nullable=True)
-    sessions = relationship('ScrapingSession', back_populates='user', lazy='dynamic')
+    # sessions = relationship('ScrapingSession', back_populates='user', lazy='dynamic')
 
     def __repr__(self):
         return f'<User {self.username}>'

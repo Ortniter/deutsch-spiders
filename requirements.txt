@@ -8,3 +8,7 @@ alembic==1.12.1
 python-telegram-bot==20.2
 celery==5.3.4
 redis==5.0.1
+fastapi==0.104.1
+uvicorn==0.24.0
+sqladmin==0.15.2
+fastapi-storages==0.2.0

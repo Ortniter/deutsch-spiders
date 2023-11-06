@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, BigInteger
 from sqlalchemy.orm import Session, relationship
 
 from db import Base
@@ -9,7 +9,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(255), nullable=True)
-    telegram_id = Column(Integer, index=True)
+    telegram_id = Column(BigInteger, index=True)
     first_name = Column(String(255), nullable=True)
     last_name = Column(String(255), nullable=True)
     sessions = relationship('ScrapingSession', back_populates='user', lazy='dynamic')

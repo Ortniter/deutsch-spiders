@@ -2,6 +2,7 @@ import json
 import datetime
 from functools import cached_property
 
+from sqlalchemy import Date
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 from bot.constants import Actions
@@ -35,7 +36,7 @@ def get_sessions_keyboard(user, scraper):
 
     sessions = user.sessions.filter(
         ScrapingSession.scraper == scraper,
-        ScrapingSession.created_at == datetime.date.today()
+        ScrapingSession.created_at.cast(Date) == datetime.date.today()
     ).all()
 
     for sessions in sessions:

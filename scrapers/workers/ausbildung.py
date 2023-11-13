@@ -43,7 +43,7 @@ class AbstractExplorePage:
                 except NoSuchElementException as e:
                     failed_attempts += 1
                     logger.info(f'Failed attempts: {failed_attempts}')
-                    if failed_attempts == 3:
+                    if failed_attempts == 10:
                         break
                     else:
                         continue

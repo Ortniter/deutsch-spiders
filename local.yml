@@ -6,9 +6,21 @@ services:
     networks:
       selenium:
       app:
+      db:
     ports:
       - 4444:4444
       - 7900:7900
+
+  db:
+    image: postgres:12.9-alpine
+    networks:
+      - db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    env_file:
+      - docker/db/.env
+    ports:
+      - 5432:5432
 
   app:
     build:
@@ -17,20 +29,33 @@ services:
     networks:
       selenium:
       app:
+      db:
     volumes:
       - ./:/app
       - ~/.bash_history:/root/.bash_history
     command: |
-      /usr/bin/env sh -c "uvicorn main:app --host 0.0.0.0 --reload"
+      /usr/bin/env sh -c "wait-for db:5432 --
+      alembic upgrade head
+      python3 run_bot.py"
     env_file:
       - docker/app/.env
+      - docker/db/.env
     ports:
       - 8000:8000
+    depends_on:
+      - db
     environment:
       - IPYTHONDIR=/app/.ipython
 
 networks:
+  db:
+    driver: bridge
   app:
     driver: bridge
   selenium:
     driver: bridge
+
+volumes:
+  pgdata:
+    name: deutsch_spiders_db
+    driver: local

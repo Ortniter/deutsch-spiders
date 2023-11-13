@@ -48,6 +48,19 @@ async def ausbildung(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
+    is_search_page = scraper_utils.is_ausbildung_search_page(url)
+    is_jobs_page = scraper_utils.is_ausbildung_jobs_page(url)
+
+    print(is_search_page, is_jobs_page)
+    print(url)
+
+    if not any((is_search_page, is_jobs_page)):
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text='Please provide a valid url.'
+        )
+        return
+
     with SessionLocal() as db:
         user = User.get_by_telegram_id(db=db, telegram_id=update.effective_chat.id)
         scraping_session = ScrapingSession(

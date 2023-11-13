@@ -9,19 +9,22 @@ from bs4 import BeautifulSoup, Tag
 import config
 from users.models import User
 from scrapers.models import ScrapingSession, Record
+from scrapers import utils as scraper_utils
 from db import SessionLocal
 
 logger = logging.getLogger(__name__)
 
 
-class SearchPage:
-    def __init__(self, search_page: str = None):
+class AbstractExplorePage:
+    LOAD_MORE_BUTTON_XPATH = None
+    EXPLORE_RESULTS_XPATH = None
+
+    def __init__(self, url: str):
         self.driver = config.get_webdriver()
-        self.search_page = search_page or config.SEARCH_PAGE
-        self.session: HTMLSession = HTMLSession()
+        self.url: str = url
 
     def render(self):
-        self.driver.get(self.search_page)
+        self.driver.get(self.url)
         sleep(config.WAIT_TIME)
         self.accept_cookies()
         sleep(config.WAIT_TIME)
@@ -51,20 +54,30 @@ class SearchPage:
         self.driver.execute_script(config.SCROLL_BOTTOM_SCRIPT)
 
     def load_more_elements(self):
-        element = self.driver.find_element(by=By.XPATH, value=config.LOAD_MORE_BUTTON_XPATH)
+        element = self.driver.find_element(by=By.XPATH, value=self.LOAD_MORE_BUTTON_XPATH)
         element.click()
 
     @property
-    def search_page_html(self):
+    def explore_page_html(self):
         return HTML(html=self.driver.page_source, url=config.AUSBILDUNG_DE_BASE_URL)
 
     @property
-    def search_results(self):
-        return self.search_page_html.xpath(config.SEARCH_RESULTS_XPATH, first=True)
+    def explore_results(self):
+        return self.explore_page_html.xpath(self.EXPLORE_RESULTS_XPATH, first=True)
 
     @property
     def found_links(self):
-        return self.search_results.absolute_links
+        return self.explore_results.absolute_links
+
+
+class SearchPage(AbstractExplorePage):
+    LOAD_MORE_BUTTON_XPATH = config.SEARCH_LOAD_MORE_BUTTON_XPATH
+    EXPLORE_RESULTS_XPATH = config.SEARCH_RESULTS_XPATH
+
+
+class JobsPage(AbstractExplorePage):
+    LOAD_MORE_BUTTON_XPATH = config.JOB_LOAD_MORE_BUTTON_XPATH
+    EXPLORE_RESULTS_XPATH = config.JOB_PAGE_RESULTS_XPATH
 
 
 class DetailPage:
@@ -110,10 +123,16 @@ class DetailPage:
 
 
 def run(scraping_session: ScrapingSession):
-    search_page = SearchPage(scraping_session.url)
-    search_page.render()
+    if scraper_utils.is_ausbildung_search_page(scraping_session.url):
+        explore_page = SearchPage(scraping_session.url)
+    elif scraper_utils.is_ausbildung_jobs_page(scraping_session.url):
+        explore_page = JobsPage(scraping_session.url)
+    else:
+        raise ValueError('Invalid url.')
 
-    links = list(search_page.found_links)
+    explore_page.render()
+
+    links = list(explore_page.found_links)
 
     with SessionLocal() as db:
         records_to_create = []

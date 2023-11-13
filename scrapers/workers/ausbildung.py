@@ -30,6 +30,7 @@ class AbstractExplorePage:
         sleep(config.WAIT_TIME)
 
         found_links_count = 0
+        failed_attempts = 0
 
         while True:
             self.scroll_bottom()
@@ -40,7 +41,14 @@ class AbstractExplorePage:
                 try:
                     self.load_more_elements()
                 except NoSuchElementException as e:
-                    break
+                    failed_attempts += 1
+                    logger.info(f'Failed attempts: {failed_attempts}')
+                    if failed_attempts == 3:
+                        break
+                    else:
+                        continue
+                else:
+                    failed_attempts = 0
 
             found_links_count = len(self.found_links)
 

@@ -87,6 +87,13 @@ class JobsPage(AbstractExplorePage):
     LOAD_MORE_BUTTON_XPATH = config.JOB_LOAD_MORE_BUTTON_XPATH
     EXPLORE_RESULTS_XPATH = config.JOB_PAGE_RESULTS_XPATH
 
+    def click_jobs_button(self, path='//*[@id="tab-bar-anchor"]/div/ul/li[2]/a'):
+        self.driver.get(self.url)
+        sleep(config.WAIT_TIME)
+        self.accept_cookies()
+        sleep(config.WAIT_TIME)
+        element = self.driver.find_element(by=By.XPATH, value=path)
+        element.click()
 
 class DetailPage:
 

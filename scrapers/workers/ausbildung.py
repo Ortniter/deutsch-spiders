@@ -95,6 +95,19 @@ class JobsPage(AbstractExplorePage):
         element = self.driver.find_element(by=By.XPATH, value=path)
         element.click()
 
+    def _load_more_elements(self, path='/html/body/div[3]/main/div/div/div[1]/div/div[2]/div/div[2]/div[2]/div'):
+        element = self.driver.find_element(by=By.XPATH, value=path)
+        element.click()
+
+    @property
+    def _explore_results(self, path='/html/body/div[3]/main/div/div/div[1]/div/div[2]/div/div[2]/div'):
+        return self.explore_page_html.xpath(path, first=True)
+
+    @property
+    def _found_links(self):
+        return self._explore_results.absolute_links
+
+
 class DetailPage:
 
     def __init__(self, url: str):

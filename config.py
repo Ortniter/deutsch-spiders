@@ -42,6 +42,7 @@ REDIS_URL = decouple_config('REDIS_URL', 'redis://redis:6379/0', cast=str)
 def get_chrome_options() -> ChromeOptions:
     chrome_options = ChromeOptions()
     chrome_options.add_argument("--headless")
+    chrome_options.add_argument("disable_infobars")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.binary_location = GOOGLE_CHROME_BIN

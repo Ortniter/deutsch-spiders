@@ -29,3 +29,11 @@ def is_valid_url(url):
         return all([result.scheme, result.netloc])
     except ValueError:
         return False
+
+
+def is_ausbildung_search_page(url):
+    return 'suche' in url
+
+
+def is_ausbildung_jobs_page(url):
+    return 'berufe' in url

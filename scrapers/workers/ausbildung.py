@@ -169,7 +169,7 @@ def run(scraping_session: ScrapingSession):
             detail_page = DetailPage(link)
             detail_page.render()
 
-            if detail_page.email:
+            if any((detail_page.email, detail_page.phone)):
                 record = Record(
                     url=link,
                     name=detail_page.name,

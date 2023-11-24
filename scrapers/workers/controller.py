@@ -31,7 +31,7 @@ def run_worker(db, scraping_session):
             chat_id=scraping_session.user.telegram_id,
             text=f'Error occurred while scraping {scraping_session.scraper.value}.'
         )
-        raise e
+        logger.error(e)
     else:
         scraping_session.status = scraper_constants.Statuses.ready
         db.add(scraping_session)

@@ -43,7 +43,7 @@ class AbstractExplorePage:
                 except NoSuchElementException as e:
                     failed_attempts += 1
                     logger.info(f'Failed attempts: {failed_attempts}')
-                    if failed_attempts == 10:
+                    if failed_attempts == 3:
                         break
                     else:
                         continue
@@ -158,9 +158,14 @@ def run(scraping_session: ScrapingSession):
     else:
         raise ValueError('Invalid url.')
 
-    explore_page.render()
+    try:
+        explore_page.render()
+        links = list(explore_page.found_links)
+    except Exception as e:
+        explore_page.driver.quit()
+        raise e
 
-    links = list(explore_page.found_links)
+    explore_page.driver.quit()
 
     with SessionLocal() as db:
         records_to_create = []

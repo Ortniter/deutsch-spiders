@@ -25,7 +25,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: docker/app/Dockerfile_local
+      dockerfile: docker/app/Dockerfile
     networks:
       selenium:
       app:
@@ -50,7 +50,7 @@ services:
   scraper:
     build:
       context: .
-      dockerfile: docker/app/Dockerfile_local
+      dockerfile: docker/app/Dockerfile
     env_file:
       - docker/app/.env
       - docker/db/.env

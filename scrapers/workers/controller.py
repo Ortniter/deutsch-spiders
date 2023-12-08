@@ -30,6 +30,7 @@ def run_worker(db, scraping_session):
         bot_controller.send_message(
             chat_id=scraping_session.user.telegram_id,
             text=f'Error occurred while scraping {scraping_session.scraper.value}.'
+                 f'\nLink: {scraping_session.url}'
         )
         logger.error(e)
     else:

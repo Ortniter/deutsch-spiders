@@ -94,6 +94,12 @@ class Button:
         elif self.data.is_action_load_records:
             await self._load_records()
 
+        elif self.data.is_action_get_summary:
+            await self.bot.send_message(
+                chat_id=self.chat_id,
+                text=self.data.get_selected_session().summary,
+            )
+
         elif self.data.is_action_back:
             await self._back()
 

@@ -46,6 +46,14 @@ class ScrapingSession(Base):
         return self.status.value.capitalize()
 
     @property
+    def summary(self):
+        return (f'Status: {self.formatted_status}'
+                f'\nCreated at: {self.formatted_created_at}'
+                f'\nRecords: {len(self.records)}'
+                f'\nScraper: {self.scraper.value}'
+                f'\nUrl: {self.url}')
+
+    @property
     def temp_file_config(self):
         return {
             'mode': 'w', 'delete': False, 'suffix': '.csv',
@@ -65,6 +73,7 @@ class Record(Base):
     position = Column(String, index=True, nullable=True)
     email = Column(String, index=True)
     phone = Column(String, index=True, nullable=True)
+    emails_from_description = Column(String, index=True, nullable=True)
     session_id = Column(Integer, ForeignKey('sessions.id', ondelete='CASCADE'))
     session = relationship('ScrapingSession', back_populates='records')
 

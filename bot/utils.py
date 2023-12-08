@@ -43,9 +43,20 @@ def get_sessions_keyboard(user, scraper):
         keyboard.append([
             InlineKeyboardButton(
                 text=f'{sessions.formatted_status} {sessions.formatted_created_at}',
-                callback_data=json.dumps({'action': Actions.LOAD_RECORDS.value, 'session_id': sessions.id})
+                callback_data=json.dumps({'action': Actions.GET_SUMMARY.value, 'session_id': sessions.id})
             )
         ])
+        keyboard.append([
+            InlineKeyboardButton(
+                text='🤖 CSV',
+                callback_data=json.dumps({'action': Actions.LOAD_RECORDS.value, 'session_id': sessions.id})
+            ),
+            InlineKeyboardButton(
+                text='👁 LINK',
+                url=sessions.url,
+            )
+        ])
+
 
     keyboard.append([
         InlineKeyboardButton(
@@ -73,6 +84,10 @@ class Mapper:
     @cached_property
     def current_user(self):
         return self.db.query(User).filter(User.telegram_id == self.telegram_id).first()
+
+    @property
+    def is_action_get_summary(self):
+        return self.action == Actions.GET_SUMMARY.value
 
     @property
     def is_action_list_sessions(self):

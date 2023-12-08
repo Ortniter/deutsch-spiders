@@ -87,26 +87,6 @@ class JobsPage(AbstractExplorePage):
     LOAD_MORE_BUTTON_XPATH = config.JOB_LOAD_MORE_BUTTON_XPATH
     EXPLORE_RESULTS_XPATH = config.JOB_PAGE_RESULTS_XPATH
 
-    def click_jobs_button(self, path='//*[@id="tab-bar-anchor"]/div/ul/li[2]/a'):
-        self.driver.get(self.url)
-        sleep(config.WAIT_TIME)
-        self.accept_cookies()
-        sleep(config.WAIT_TIME)
-        element = self.driver.find_element(by=By.XPATH, value=path)
-        element.click()
-
-    def _load_more_elements(self, path='/html/body/div[3]/main/div/div/div[1]/div/div[2]/div/div[2]/div[2]/div'):
-        element = self.driver.find_element(by=By.XPATH, value=path)
-        element.click()
-
-    @property
-    def _explore_results(self, path='/html/body/div[3]/main/div/div/div[1]/div/div[2]/div/div[2]/div'):
-        return self.explore_page_html.xpath(path, first=True)
-
-    @property
-    def _found_links(self):
-        return self._explore_results.absolute_links
-
 
 class DetailPage:
 
@@ -114,6 +94,7 @@ class DetailPage:
         self.url: str = url
         self.session: HTMLSession = HTMLSession()
         self._contact_div: Tag = Tag(name='div')
+        self._description_div: Tag = Tag(name='div')
         self.has_contact_info = False
 
     def __del__(self):
@@ -124,6 +105,7 @@ class DetailPage:
 
         soup = BeautifulSoup(response.html.html, 'html.parser')
         contact_div = soup.find("div", class_=config.CONTACT_DIV_CLASS)
+        self._description_div = soup.find("div", class_=config.DESCRIPTION_DIV_CLASS)
 
         if contact_div:
             self._contact_div = contact_div
@@ -148,6 +130,15 @@ class DetailPage:
     def phone(self):
         phone_div = self._contact_div.find('div', class_=config.PHONE_DIV_CLASS)
         return getattr(phone_div, 'text', '').strip()
+
+    @property
+    def emails_from_description(self):
+        description = getattr(self._description_div, 'text', '').strip()
+        emails = scraper_utils.extract_emails(description)
+        formatted_emails = ''
+        if emails:
+            formatted_emails = ' | '.join(emails)
+        return formatted_emails
 
 
 def run(scraping_session: ScrapingSession):
@@ -174,13 +165,14 @@ def run(scraping_session: ScrapingSession):
             detail_page = DetailPage(link)
             detail_page.render()
 
-            if any((detail_page.email, detail_page.phone)):
+            if any((detail_page.email, detail_page.phone, detail_page.emails_from_description)):
                 record = Record(
                     url=link,
                     name=detail_page.name,
                     position=detail_page.position,
                     email=detail_page.email,
                     phone=detail_page.phone,
+                    emails_from_description=detail_page.emails_from_description,
                     session_id=scraping_session.id
                 )
                 records_to_create.append(record)

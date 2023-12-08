@@ -26,6 +26,7 @@ NAME_DIV_CLASS = decouple_config('NAME_DIV_CLASS', '', cast=str)
 POSITION_DIV_CLASS = decouple_config('POSITION_DIV_CLASS', '', cast=str)
 EMAIL_DIV_CLASS = decouple_config('EMAIL_DIV_CLASS', '', cast=str)
 PHONE_DIV_CLASS = decouple_config('PHONE_DIV_CLASS', '', cast=str)
+DESCRIPTION_DIV_CLASS = decouple_config('DESCRIPTION_DIV_CLASS', '', cast=str)
 
 # Selenium
 GOOGLE_CHROME_BIN = decouple_config('GOOGLE_CHROME_BIN', '', cast=str)

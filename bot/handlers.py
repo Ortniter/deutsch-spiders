@@ -7,6 +7,7 @@ from db import SessionLocal
 from bot import utils
 from users.models import User
 from scrapers.models import ScrapingSession, Record
+from scrapers.constants import Scrapers
 from scrapers import utils as scraper_utils
 from scrapers import constants as scraper_constants
 
@@ -94,6 +95,9 @@ class Button:
         elif self.data.is_action_load_records:
             await self._load_records()
 
+        elif self.data.is_action_ausbildung_page:
+            await self._ausbildung_page()
+
         elif self.data.is_action_get_summary:
             await self.bot.send_message(
                 chat_id=self.chat_id,
@@ -103,13 +107,25 @@ class Button:
         elif self.data.is_action_back:
             await self._back()
 
+    async def _ausbildung_page(self, **kwargs):
+        await self.bot.edit_message_reply_markup(
+            chat_id=self.chat_id,
+            message_id=self.previous_message_id,
+            reply_markup=utils.get_sessions_keyboard(
+                user=self.data.current_user,
+                scraper=Scrapers.ausbildung.value,
+                page_number=self.data.page_number,
+            ),
+        )
+
     async def _list_sessions(self, **kwargs):
         await self.bot.edit_message_reply_markup(
             chat_id=self.chat_id,
             message_id=self.previous_message_id,
             reply_markup=utils.get_sessions_keyboard(
                 user=self.data.current_user,
-                scraper=self.data.selected_scraper
+                scraper=self.data.selected_scraper,
+                page_number=1
             ),
         )
 
